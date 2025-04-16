@@ -350,11 +350,11 @@ export default function VideoPage() {
           Birthday Message
         </h2>
         <p className="mb-4 leading-relaxed">
-          Ella, this song is a small token of how much you mean to me. Your friendship brings so much joy and laughter
-          to my life.
+          Ella, this song is a small token of how much you mean to us. Your friendship brings so much joy and laughter
+          to our life.
         </p>
         <p className="leading-relaxed">
-          I hope this birthday is just the beginning of an amazing year ahead filled with wonderful adventures and
+          We hope this birthday is just the beginning of an amazing year ahead filled with wonderful adventures and
           beautiful moments!
         </p>
       </div>
