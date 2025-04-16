@@ -42,7 +42,7 @@ export default function Home() {
             <Sparkles className="h-16 w-16 mx-auto text-yellow-300" />
           </motion.div>
           <h1 className="text-4xl font-bold mb-6 text-white">Hey Ella!</h1>
-          <p className="text-xl mb-10 text-white/90">I made something special just for your birthday!</p>
+          <p className="text-xl mb-10 text-white/90">We made something special just for your birthday!</p>
           <motion.button
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
