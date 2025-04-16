@@ -14,6 +14,7 @@ import {
   SkipBack,
   SkipForward,
   Sparkles,
+  Loader2,
 } from "lucide-react"
 import { motion } from "framer-motion"
 import { Slider } from "@/components/ui/slider"
@@ -27,6 +28,7 @@ export default function VideoPage() {
   const [duration, setDuration] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
   const [showControls, setShowControls] = useState(true)
+  const [isLoading, setIsLoading] = useState(true)
   const videoRef = useRef<HTMLVideoElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null)
@@ -152,6 +154,10 @@ export default function VideoPage() {
     setShowControls(true)
   }
 
+  const handleVideoLoaded = () => {
+    setIsLoading(false)
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-fuchsia-400 via-purple-500 to-indigo-500 p-4 text-white">
       <Button onClick={() => router.push("/")} variant="ghost" className="mb-6 hover:bg-white/10 text-white">
@@ -184,15 +190,26 @@ export default function VideoPage() {
           <video
             ref={videoRef}
             className="w-full h-full"
-            poster="/place.png?height=400&width=600"
+            poster="/placeholder.svg?height=400&width=600"
             onPlay={() => setIsPlaying(true)}
             onPause={() => setIsPlaying(false)}
             onClick={togglePlay}
+            onLoadedData={handleVideoLoaded}
           >
             {/* The user will add their video here */}
-            <source src="/birthday.mp4" type="video/mp4" />
+            <source src="" type="video/mp4" />
             Your browser does not support the video tag.
           </video>
+
+          {/* Loading overlay */}
+          {isLoading && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+              <div className="flex flex-col items-center">
+                <Loader2 className="h-12 w-12 animate-spin text-white mb-2" />
+                <p className="text-white text-sm">Loading video...</p>
+              </div>
+            </div>
+          )}
 
           {!isPlaying && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/30">
