@@ -260,7 +260,7 @@ export default function WishesPage() {
           gift that keeps on giving.
         </p>
         <p className="leading-relaxed">
-          I hope this birthday brings you as much joy as you bring to everyone around you. Here's to celebrating you
+          We hope this birthday brings you as much joy as you bring to everyone around you. Here's to celebrating you
           today and always!
         </p>
       </div>
