@@ -28,7 +28,9 @@ export default function VideoPage() {
   const [duration, setDuration] = useState(0)
   const [currentTime, setCurrentTime] = useState(0)
   const [showControls, setShowControls] = useState(true)
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
+  const [isBuffering, setIsBuffering] = useState(false)
+  const [playAttempted, setPlayAttempted] = useState(false)
   const videoRef = useRef<HTMLVideoElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const controlsTimeoutRef = useRef<NodeJS.Timeout | null>(null)
@@ -61,15 +63,30 @@ export default function VideoPage() {
         setDuration(video.duration)
       }
 
+      const handleWaiting = () => {
+        if (isPlaying && playAttempted) {
+          setIsBuffering(true)
+        }
+      }
+
+      const handlePlaying = () => {
+        setIsBuffering(false)
+        setIsLoading(false)
+      }
+
       video.addEventListener("timeupdate", updateProgress)
       video.addEventListener("durationchange", handleDurationChange)
+      video.addEventListener("waiting", handleWaiting)
+      video.addEventListener("playing", handlePlaying)
 
       return () => {
         video.removeEventListener("timeupdate", updateProgress)
         video.removeEventListener("durationchange", handleDurationChange)
+        video.removeEventListener("waiting", handleWaiting)
+        video.removeEventListener("playing", handlePlaying)
       }
     }
-  }, [])
+  }, [isPlaying, playAttempted])
 
   useEffect(() => {
     const hideControlsTimer = () => {
@@ -77,7 +94,7 @@ export default function VideoPage() {
         clearTimeout(controlsTimeoutRef.current)
       }
 
-      if (isPlaying) {
+      if (isPlaying && !isBuffering) {
         controlsTimeoutRef.current = setTimeout(() => {
           setShowControls(false)
         }, 3000)
@@ -91,15 +108,34 @@ export default function VideoPage() {
         clearTimeout(controlsTimeoutRef.current)
       }
     }
-  }, [isPlaying, showControls])
+  }, [isPlaying, showControls, isBuffering])
 
   const togglePlay = () => {
     if (videoRef.current) {
+      if (!playAttempted) {
+        setPlayAttempted(true)
+        setIsLoading(true)
+      }
+
       if (isPlaying) {
         videoRef.current.pause()
       } else {
-        videoRef.current.play()
+        const playPromise = videoRef.current.play()
+
+        if (playPromise !== undefined) {
+          playPromise
+            .then(() => {
+              // Playback started successfully
+              setIsLoading(false)
+            })
+            .catch((error) => {
+              // Auto-play was prevented or other error
+              console.error("Error playing video:", error)
+              setIsLoading(false)
+            })
+        }
       }
+
       setIsPlaying(!isPlaying)
       setShowControls(true)
     }
@@ -129,6 +165,11 @@ export default function VideoPage() {
       const newTime = (value[0] / 100) * duration
       videoRef.current.currentTime = newTime
       setProgress(value[0])
+
+      // Show buffering indicator when seeking
+      if (playAttempted && isPlaying) {
+        setIsBuffering(true)
+      }
     }
   }
 
@@ -141,12 +182,18 @@ export default function VideoPage() {
   const skipBackward = () => {
     if (videoRef.current) {
       videoRef.current.currentTime = Math.max(0, videoRef.current.currentTime - 10)
+      if (playAttempted && isPlaying) {
+        setIsBuffering(true)
+      }
     }
   }
 
   const skipForward = () => {
     if (videoRef.current) {
       videoRef.current.currentTime = Math.min(duration, videoRef.current.currentTime + 10)
+      if (playAttempted && isPlaying) {
+        setIsBuffering(true)
+      }
     }
   }
 
@@ -155,7 +202,9 @@ export default function VideoPage() {
   }
 
   const handleVideoLoaded = () => {
-    setIsLoading(false)
+    if (playAttempted) {
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -201,17 +250,17 @@ export default function VideoPage() {
             Your browser does not support the video tag.
           </video>
 
-          {/* Loading overlay */}
-          {isLoading && (
-            <div className="absolute inset-0 flex items-center justify-center bg-black/50 backdrop-blur-sm">
+          {/* Loading overlay - only show after play is attempted */}
+          {(isLoading || isBuffering) && playAttempted && (
+            <div className="absolute inset-0 flex items-center justify-center bg-black/40 backdrop-blur-sm">
               <div className="flex flex-col items-center">
                 <Loader2 className="h-12 w-12 animate-spin text-white mb-2" />
-                <p className="text-white text-sm">Loading video...</p>
+                <p className="text-white text-sm">{isLoading ? "Loading video..." : "Buffering..."}</p>
               </div>
             </div>
           )}
 
-          {!isPlaying && (
+          {!isPlaying && !isLoading && (
             <div className="absolute inset-0 flex items-center justify-center bg-black/30">
               <motion.button
                 whileHover={{ scale: 1.1 }}
