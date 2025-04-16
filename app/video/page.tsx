@@ -190,14 +190,14 @@ export default function VideoPage() {
           <video
             ref={videoRef}
             className="w-full h-full"
-            poster="/placeholder.svg?height=400&width=600"
+            poster="/place.png?height=400&width=600"
             onPlay={() => setIsPlaying(true)}
             onPause={() => setIsPlaying(false)}
             onClick={togglePlay}
             onLoadedData={handleVideoLoaded}
           >
             {/* The user will add their video here */}
-            <source src="" type="video/mp4" />
+            <source src="/birthday.mp4" type="video/mp4" />
             Your browser does not support the video tag.
           </video>
 
