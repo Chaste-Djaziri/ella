@@ -93,7 +93,7 @@ export default function Home() {
             </div>
             <p className="mb-4 leading-relaxed">
               Ella, on your special day, We want to wish you all the happiness in the world! You're an amazing friend who
-              brings so much joy to my life.
+              brings so much joy to our life.
             </p>
             <p className="leading-relaxed">
               May your day be filled with laughter, love, and unforgettable moments. Here's to celebrating you and all
