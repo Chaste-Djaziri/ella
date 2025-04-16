@@ -92,7 +92,7 @@ export default function Home() {
               <h2 className="text-2xl font-bold">Birthday Wishes</h2>
             </div>
             <p className="mb-4 leading-relaxed">
-              Ella, on your special day, I want to wish you all the happiness in the world! You're an amazing friend who
+              Ella, on your special day, We want to wish you all the happiness in the world! You're an amazing friend who
               brings so much joy to my life.
             </p>
             <p className="leading-relaxed">
